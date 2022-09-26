@@ -1,0 +1,13 @@
+# produced / downloaded files
+*.txt
+*.DAT
+*.csv
+*.png
+*.pdf
+*.jpg
+
+# IDE files
+.idea
+
+# allowed files
+!requirements.txt
