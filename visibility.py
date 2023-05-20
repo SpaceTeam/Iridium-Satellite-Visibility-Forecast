@@ -15,9 +15,8 @@ import pytz
 # quit()
 
 # receiver position
-lat = 51.7539
-lon = 10.5119
-alt = 0.844  # above sea level (Geoid) [km]
+#  The minimum elevation angle for an earth station is 8.2 degrees. 
+# http://www.kt.agh.edu.pl/~kulakowski/satelity/Iridium-Leo.pdf
 elBound = 10.0  # limit for lowest elevation [deg]
 
 # time settings
