@@ -4,4 +4,7 @@ Tool to plot a prediction of the amount of visible Iridium satellites depending 
 
 See following URLs to get TLEs from current Iridium satellites:
 - https://www.celestrak.com/NORAD/elements/iridium-NEXT.txt
-- https://www.gsat.us/tools/iridium-satellite-location-map-tool
+- https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium&FORMAT=tle
+- https://celestrak.org/NORAD/elements/table.php?GROUP=iridium-NEXT&FORMAT=tle
+
+To validate the output, countercheck with https://iridiumwhere.com/
