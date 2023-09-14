@@ -7,6 +7,8 @@ from pyorbital import tlefile as tf
 from pyorbital.orbital import Orbital as Orb
 from datetime import datetime as dt
 from datetime import timedelta as td
+
+import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import pytz
@@ -17,24 +19,24 @@ import pytz
 # quit()
 
 # receiver position
-# lat = 48.02708
-# lon = 16.26235
-# alt = 0.1  # above sea level (Geoid) [km]
-lat = 48.27027
-lon = 14.4077
-alt = 0.25  # above sea level (Geoid) [km]
+lat = 48.02708
+lon = 16.26235
+alt = 0.1  # above sea level (Geoid) [km]
+# lat = 48.27027
+# lon = 14.4077
+# alt = 0.25  # above sea level (Geoid) [km]
 #  The minimum elevation angle for an earth station is 8.2 degrees. 
 # http://www.kt.agh.edu.pl/~kulakowski/satelity/Iridium-Leo.pdf
 # lets be more conservative with 10deg
 elBound = 10.0  # limit for lowest elevation [deg]
 
 # time settings
-startTime = dt(year=2023, month=9, day=3, hour=12, tzinfo=pytz.utc)
+startTime = dt(year=2023, month=9, day=11, hour=19, tzinfo=pytz.utc)
 hoursForecast = 2
 arg1 = 0
 resolution = 10  # [seconds]
 # time zero
-zero_time = dt(year=2023, month=9, day=3, hour=0, tzinfo=pytz.utc)
+zero_time = dt(year=startTime.year, month=startTime.month, day=startTime.day, hour=0, tzinfo=startTime.tzinfo)
 
 # input file settings (use spares[] to exclude spare Iridium satellites)
 tleFile = 'iridium-NEXT.txt'
@@ -102,12 +104,30 @@ while tempTime < endTime:
 print("#\ndone!")
 csv.close()
 
+
+# Convert array of integers to pandas series
+numbers_series = pd.Series(satCountVec)
+  
+# Get the window of series
+# of observations of specified window size
+window_size = np.round(60/resolution)*10 
+windows = numbers_series.rolling(int(window_size), center=True)
+  
+# Create a series of moving
+# averages of each window
+moving_averages = windows.mean()
+  
+# Convert pandas series back to list
+satCountVec_moving_averages = moving_averages.tolist()
+
 # plot a summary
 y_max = max(satCountVec);
 fig, ax = plt.subplots()
 plt.title(str(startTime.day).zfill(2) + '-' + str(startTime.month).zfill(2) + '-' + str(
     startTime.year))
-ax.step(timeVec, satCountVec)
+ax.step(timeVec, satCountVec, label='satellites')
+ax.plot(timeVec, satCountVec_moving_averages, '--', label='Average')
+ax.legend()
 ax.set_ylabel(f'Number of satellites above {elBound} deg')
 ax.set_xlabel('h in UTC')
 ax.set(ylim=(0, y_max+1), yticks=np.arange(1, y_max+1))
